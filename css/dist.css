@@ -131,6 +131,14 @@ ul li {
   animation: 1s ease-out 2s fadein;
   animation-fill-mode: forwards;
 }
+.airpods {
+  bottom: 2%;
+  height: 23%;
+  position: absolute;
+  right: -28%;
+  max-height: 160px;
+  min-height: 30px;
+}
 .brand-desc {
   position:relative;
   animation: 1s linear 1s moveup;
@@ -354,7 +362,10 @@ footer {
 	.iphone{
 		text-align: center;
     padding:20px 0px;
-	}
+  }
+  .airpods {
+    
+  }
   .download-badge{
     text-align:center;
   }
