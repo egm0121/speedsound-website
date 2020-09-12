@@ -1,0 +1,146 @@
+<html>
+  <head>
+    <title>Speed Test</title>
+    <meta name="viewport" content="width=device-width">
+    <meta charset="utf-8">
+    <style>
+      body, html {
+        height:100%;
+        width: 100%;
+        background-color: gray;
+        font-family: sans-serif;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+      #start-app {
+        font-size: 6rem;
+        padding: 2rem;
+        display: flex;
+      }
+      #meter {
+        display: none;
+        font-size: 10rem;
+        padding: 10rem;
+        background-color:whitesmoke;
+        width: 100%;
+        text-align: center;
+        margin: 0px;
+      }
+      .row-container {
+        position: relative;
+      }
+      #meter small {
+        font-size:2rem;
+      }
+      #topSpeed {
+        font-size: 6rem; 
+      }
+      .secondary-info{
+        color: #6495ed;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 id="meter">
+      <div class='row-container'>
+        <span id='speed'>0</span><small class='label'> Km/h</small>
+      </div>
+      <div class='row-container'>
+        <span id='topSpeed' class='secondary-info'>0</span><small class='secondary-info label'> Max</small>
+      </div>
+    </h1>
+    <input type="button" id="start-app" onclick="report('granted')" value="Start" />
+    <script>
+      let watchID = null;
+      let speedHistory = [0];
+      let lowSpeedCount = 0;
+      let topSpeed = 0;
+      let lastNotifiedTime = 0;
+      let hasEnabledVoice = false;
+      const MAX_TIME_SINCE_SPOKE = 10;
+      const SPEED_DIFF_DELTA = 4;
+      const MIN_SPEED_KMH = 8;
+      const ua = window.navigator.userAgent;
+      const isIOS = /(iPad|iPhone|iPod).*WebKit/.test(ua) && !/(CriOS|OPiOS)/.test(ua);
+      const toKmh = (ms) => (ms/1000) * 3600;
+      const onSpeedUpdate = (position) => {
+        let newSpeed = parseInt(toKmh(position.coords.speed));
+        const newUpdateTime = Date.now();
+        // ignore any speed below the minimum
+        if (newSpeed < MIN_SPEED_KMH) {
+          lowSpeedCount++;
+          newSpeed = speedHistory.slice(-1)[0];
+          if (lowSpeedCount == 2) newSpeed = 0; //set to zero if raw speed < MIN_SPEED_KMH twice in a row
+        } else {
+          lowSpeedCount = 0;
+        }
+        if (newSpeed > topSpeed) topSpeed = newSpeed;
+        console.log(position.coords);
+        if( 
+          newSpeed &&
+          (
+            Math.abs(newSpeed - speedHistory.slice(-1)[0]) >= SPEED_DIFF_DELTA || 
+            ((newUpdateTime - lastNotifiedTime) / 1000) >= MAX_TIME_SINCE_SPOKE
+          )
+        ) {
+          speakSpeed(newSpeed);
+          speedHistory.push(newSpeed);
+          lastNotifiedTime = Date.now();
+        }
+        document.querySelector('#speed').innerText = newSpeed;
+        document.querySelector('#topSpeed').innerText = topSpeed;
+      }
+      const speakSpeed = (speed) => {
+        const speedSpeech = new SpeechSynthesisUtterance(speed.toString());
+        speed.pitch = 2;
+        speechSynthesis.speak(speedSpeech);
+      };
+      function error() {
+        console.log('Sorry, no position available.');
+      }
+
+      const options = {
+        enableHighAccuracy: true, 
+        maximumAge: 0,
+        timeout: 5000
+      };
+      
+      function handlePermission() {
+        navigator.permissions.query({name:'geolocation'}).then(function(result) {
+          if (result.state == 'granted') {
+            report(result.state);
+          } else if (result.state == 'prompt') {
+            report(result.state);
+            navigator.geolocation.getCurrentPosition(() => {},() => {}, options);
+          } else if (result.state == 'denied') {
+            report(result.state);
+          }
+          result.onchange = function() {
+            report(result.state);
+          }
+        });
+      }
+
+      function report(state) {
+        console.log('Permission ' + state);
+        if (watchID) navigator.geolocation.clearWatch(watchID);
+        watchID = navigator.geolocation.watchPosition(onSpeedUpdate, error, options);
+      }
+      $start = document.querySelector('#start-app');
+
+      $start.addEventListener('click', () => {
+        document.querySelector('#meter').style.display = 'block';
+        $start.style.display = 'none';
+        const silentSpeech = new SpeechSynthesisUtterance('hello');
+        silentSpeech.volume = 0;
+        speechSynthesis.speak(silentSpeech);
+        hasEnabledVoice = true;
+        if(!isIOS) handlePermission();
+      }); 
+      
+    </script>
+  </body>
+</html>
