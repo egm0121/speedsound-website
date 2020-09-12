@@ -70,12 +70,14 @@
         let newSpeed = parseInt(toKmh(position.coords.speed));
         const newUpdateTime = Date.now();
         // ignore any speed below the minimum
-        if (newSpeed < MIN_SPEED_KMH) {
+        if (newSpeed < MIN_SPEED_KMH) { 
           lowSpeedCount++;
-          newSpeed = speedHistory.slice(-1)[0];
-          if (lowSpeedCount == 2) newSpeed = 0; //set to zero if raw speed < MIN_SPEED_KMH twice in a row
-        } else {
+        } else  {
           lowSpeedCount = 0;
+        }
+        if (newSpeed < MIN_SPEED_KMH) {
+          newSpeed = speedHistory.slice(-1)[0];
+          if (lowSpeedCount >= 2) newSpeed = 0; //set to zero if raw speed < MIN_SPEED_KMH twice or more in a row
         }
         if (newSpeed > topSpeed) topSpeed = newSpeed;
         console.log(position.coords);
