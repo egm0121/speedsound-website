@@ -21,7 +21,7 @@
         display: flex;
       }
       #stop-app {
-        font-size: 6rem;
+        font-size: 4rem;
         padding: 2rem;
         display: none;
         justify-content: center;
@@ -67,8 +67,8 @@
       let topSpeed = 0;
       let lastNotifiedTime = 0;
       let hasEnabledVoice = false;
-      const startSound = (() => {const a = new Audio(); a.src = './snd/start.mp3'; a.preload = true; return a;})();
-      const stopSound = (() => {const a = new Audio(); a.src = './snd/stop.mp3'; a.preload = true; return a;})();
+      const startSound = (() => {const a = new Audio(); a.src = './snd/start.mp3'; a.preload = true; a.load(); return a;})();
+      const stopSound = (() => {const a = new Audio(); a.src = './snd/stop.mp3'; a.preload = true;  a.load(); return a;})();
       const MAX_TIME_SINCE_SPOKE = 10;
       const SPEED_DIFF_DELTA = 4;
       const MIN_SPEED_KMH = 8;
@@ -151,6 +151,7 @@
       $stop.addEventListener('click', () => {
         stopSound.play();
         document.querySelector('#meter').style.display = 'none';
+        navigator.geolocation.clearWatch(watchID);
         $start.style.display = 'block';
         $stop.style.display = 'none';
       });
