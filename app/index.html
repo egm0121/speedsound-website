@@ -67,26 +67,18 @@
       const isIOS = /(iPad|iPhone|iPod).*WebKit/.test(ua) && !/(CriOS|OPiOS)/.test(ua);
       const toKmh = (ms) => (ms/1000) * 3600;
       const onSpeedUpdate = (position) => {
-        let newSpeed = parseInt(toKmh(position.coords.speed));
+        let newSpeed = parseInt(toKmh(position.coords.speed || 0));
         const newUpdateTime = Date.now();
-        // ignore any speed below the minimum
-        if (newSpeed < MIN_SPEED_KMH) { 
-          lowSpeedCount++;
-        } else  {
-          lowSpeedCount = 0;
-        }
+        // handle speed below the minimum
         if (newSpeed < MIN_SPEED_KMH) {
+          lowSpeedCount++;
           newSpeed = speedHistory.slice(-1)[0];
           if (lowSpeedCount >= 2) newSpeed = 0; //set to zero if raw speed < MIN_SPEED_KMH twice or more in a row
-        }
+        } else { lowSpeedCount = 0; }
         if (newSpeed > topSpeed) topSpeed = newSpeed;
-        console.log(position.coords);
-        if( 
-          newSpeed &&
-          (
+        if (
             Math.abs(newSpeed - speedHistory.slice(-1)[0]) >= SPEED_DIFF_DELTA || 
             ((newUpdateTime - lastNotifiedTime) / 1000) >= MAX_TIME_SINCE_SPOKE
-          )
         ) {
           speakSpeed(newSpeed);
           speedHistory.push(newSpeed);
@@ -143,6 +135,7 @@
         if(!isIOS) handlePermission();
       }); 
       
+      window.updateSpeed = onSpeedUpdate;
     </script>
   </body>
 </html>
