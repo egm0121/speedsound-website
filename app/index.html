@@ -1,10 +1,11 @@
 <html>
   <head>
     <title>Speed Test</title>
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta charset="utf-8">
     <style>
       body, html {
+        touch-action: pan-x pan-y;
         height:100%;
         width: 100%;
         background-color: gray;
@@ -29,7 +30,7 @@
       #meter {
         display: none;
         font-size: 10rem;
-        padding: 10rem;
+        padding: 5rem;
         background-color:whitesmoke;
         width: 100%;
         text-align: center;
@@ -47,6 +48,12 @@
       .secondary-info{
         color: #6495ed;
       }
+      textarea {
+        display: flex;
+        width: 100%;
+        flex:1;
+        background-color: transparent;
+      }
     </style>
   </head>
   <body>
@@ -60,6 +67,7 @@
     </h1>
     <input type="button" id="stop-app" value="Stop" />
     <input type="button" id="start-app" onclick="report('granted')" value="Start" />
+    <textarea id="logs"></textarea>
     <script>
       let watchID = null;
       let speedHistory = [0];
@@ -67,36 +75,45 @@
       let topSpeed = 0;
       let lastNotifiedTime = 0;
       let hasEnabledVoice = false;
-      const startSound = (() => {const a = new Audio(); a.src = './snd/start.mp3'; a.preload = true; a.load(); return a;})();
-      const stopSound = (() => {const a = new Audio(); a.src = './snd/stop.mp3'; a.preload = true;  a.load(); return a;})();
       const MAX_TIME_SINCE_SPOKE = 10;
       const SPEED_DIFF_DELTA = 4;
       const MIN_SPEED_KMH = 8;
+      const MIN_LOW_SPEED_COUNT = 3;
       const ua = window.navigator.userAgent;
       const isIOS = /(iPad|iPhone|iPod).*WebKit/.test(ua) && !/(CriOS|OPiOS)/.test(ua);
       const toKmh = (ms) => (ms/1000) * 3600;
+      const $logs = document.querySelector('#logs');
+      const logInfo = (...args) =>  {console.log(...args); $logs.innerHTML += `${JSON.stringify([...args])}\n`} 
       const onSpeedUpdate = (position) => {
         let newSpeed = parseInt(toKmh(position.coords.speed || 0));
+        logInfo('onSpeedUpdate', { newSpeed });
         const newUpdateTime = Date.now();
         // handle speed below the minimum
         if (newSpeed < MIN_SPEED_KMH) {
           lowSpeedCount++;
           newSpeed = speedHistory.slice(-1)[0];
-          if (lowSpeedCount >= 2) newSpeed = 0; //set to zero if raw speed < MIN_SPEED_KMH twice or more in a row
+          if (lowSpeedCount >= MIN_LOW_SPEED_COUNT){
+            newSpeed = 0; //set to zero if raw speed < MIN_SPEED_KMH twice or more in a row
+            logInfo('lowSpeedCount detected', { newSpeed, lowSpeedCount });
+          } 
         } else { lowSpeedCount = 0; }
         if (newSpeed > topSpeed) topSpeed = newSpeed;
+        const absSpeedDiff = Math.abs(newSpeed - speedHistory.slice(-1)[0])
+        const silentTimeSec =  ((newUpdateTime - lastNotifiedTime) / 1000) 
         if (
-            Math.abs(newSpeed - speedHistory.slice(-1)[0]) >= SPEED_DIFF_DELTA || 
-            ((newUpdateTime - lastNotifiedTime) / 1000) >= MAX_TIME_SINCE_SPOKE
+            absSpeedDiff >= SPEED_DIFF_DELTA || 
+            silentTimeSec >= MAX_TIME_SINCE_SPOKE
         ) {
           speakSpeed(newSpeed);
           speedHistory.push(newSpeed);
           lastNotifiedTime = Date.now();
+          logInfo('push new speed', { newSpeed, absSpeedDiff, lastNotifiedTime, silentTimeSec });
         }
         document.querySelector('#speed').innerText = newSpeed;
         document.querySelector('#topSpeed').innerText = topSpeed;
       }
       const speakSpeed = (speed) => {
+        logInfo('speakSpeed:',speed);
         const speedSpeech = new SpeechSynthesisUtterance(speed.toString());
         speed.pitch = 2;
         speechSynthesis.speak(speedSpeech);
@@ -138,18 +155,17 @@
       $meter = document.querySelector('#meter');
 
       $start.addEventListener('click', () => {
-        startSound.play();
         $meter.style.display = 'block';
         $stop.style.display = 'block';
         $start.style.display = 'none';
-        const silentSpeech = new SpeechSynthesisUtterance('hello');
-        silentSpeech.volume = 0;
-        speechSynthesis.speak(silentSpeech);
+        const introSpeech = new SpeechSynthesisUtterance('ready');
+        speechSynthesis.speak(introSpeech);
         hasEnabledVoice = true;
         if(!isIOS) handlePermission();
       }); 
       $stop.addEventListener('click', () => {
-        stopSound.play();
+        const stopSpeech = new SpeechSynthesisUtterance('finished');
+        speechSynthesis.speak(stopSpeech);
         document.querySelector('#meter').style.display = 'none';
         navigator.geolocation.clearWatch(watchID);
         $start.style.display = 'block';
