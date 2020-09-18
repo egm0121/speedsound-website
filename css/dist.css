@@ -363,8 +363,14 @@ footer {
 		text-align: center;
     padding:20px 0px;
   }
-  .airpods {
-    
+  #scroll-badge{
+    position: fixed;
+    bottom: 0px;
+    width: 150px;
+    left: calc(50% - 75px);
+  }
+  .coming-soon-title {
+    opacity: 0;
   }
   .download-badge{
     text-align:center;
