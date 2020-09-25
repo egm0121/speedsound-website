@@ -366,6 +366,12 @@ footer {
 	.iphone{
 		text-align: center;
     padding:20px 0px;
+    animation: none;
+    opacity: 1;
+  }
+  .brand-desc {
+    animation: none;
+    transform: none;
   }
   #scroll-badge{
     position: fixed;
