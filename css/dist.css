@@ -376,8 +376,8 @@ footer {
   #scroll-badge{
     position: fixed;
     bottom: -15px;
-    width: 150px;
-    left: calc(50% - 75px);
+    width: 175px;
+    left: calc(50% - 85px);
   }
   .coming-soon-title {
     opacity: 0;
