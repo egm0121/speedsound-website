@@ -375,9 +375,13 @@ footer {
   }
   #scroll-badge{
     position: fixed;
-    bottom: -15px;
-    width: 175px;
-    left: calc(50% - 85px);
+    bottom: -25px;
+    width: 100vw;
+    left: 0px;
+    padding: 0px 25vw;
+    box-sizing: border-box;
+    background: #418ed8ed;
+    box-shadow: 0 0 25px 5px #000000de;
   }
   .coming-soon-title {
     opacity: 0;
