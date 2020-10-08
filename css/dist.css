@@ -302,7 +302,7 @@ footer {
     margin-bottom: 0px;
   }
   #mc_embed_signup input.email::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: #F44336;
+    color: #ff0057;
     opacity: 0.7; /* Firefox */
   }
   #mc_embed_signup input.email {
@@ -310,7 +310,7 @@ footer {
     border-radius: 10px;
     border-bottom-left-radius: 0px;
     border-bottom-right-radius: 0px;
-    border: 2px solid #F44336;
+    border: 2px solid #ff0057;
     color: #343434;
     background-color: #ffffffa8;
   }
@@ -318,7 +318,7 @@ footer {
     border-radius: 10px;
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
-    background-color: #f44336;
+    background-color: #ff0057;
   }
 	h2,h3,h5,h4 {
 		font-weight:600;
