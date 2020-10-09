@@ -87,7 +87,7 @@ ul li {
   border: 1px solid #8ecaff; 
   border-radius: 8px;
   color: #343434;
-  background-color: #d4ebffdb;
+  background-color: #fff;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   height: 50px;
@@ -102,15 +102,15 @@ ul li {
   border-radius: 10px;
   letter-spacing: .03em;
   color: #fff;
-  background-color: #33a4ea;
+  background-color: #5db8ff;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   height: 50px;
   line-height: 32px;
   padding: 0 18px;
   font-weight: 600;
-  box-shadow: 0px 5px 10px #0b0b0b78;
-  background-color: #00a2ff;
+  box-shadow: 0px 10px 15px #2e2e2ec2;
+  background-color: #5db8ff;
 }
 .badge-large{
   padding-top: 35px; 
@@ -302,23 +302,23 @@ footer {
     margin-bottom: 0px;
   }
   #mc_embed_signup input.email::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: #ff0057;
-    opacity: 0.7; /* Firefox */
+    color: rgb(155, 155, 155);
+    opacity: 0.8; /* Firefox */
   }
   #mc_embed_signup input.email {
     width: 100%;
     border-radius: 10px;
     border-bottom-left-radius: 0px;
     border-bottom-right-radius: 0px;
-    border: 2px solid #ff0057;
+    border: 2px solid #5db8ff;
     color: #343434;
-    background-color: #ffffffa8;
+    background-color: #fff;
   }
   #mc_embed_signup .button {
     border-radius: 10px;
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
-    background-color: #ff0057;
+    background-color: #5db8ff;
   }
 	h2,h3,h5,h4 {
 		font-weight:600;
