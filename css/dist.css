@@ -334,6 +334,10 @@ footer {
   .badge-large{
     padding: 20px 0px;  
   }
+  .badge-large a {
+    margin-bottom: 20px;
+    display: inline-block;
+  }
   .app-icon{
   	max-width:60px;
     border-radius:30px;
