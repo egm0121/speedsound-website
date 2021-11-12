@@ -132,9 +132,9 @@ blockquote i {
   display: none;
 }
 .app-logo{
-  border-radius: 20px;
-  margin-right: 20px;
-  height: 90px;
+  border-radius: 15px;
+  margin-right: 15px;
+  height: 70px;
 }
 .iphone {
   opacity: 0;
