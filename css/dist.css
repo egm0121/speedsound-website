@@ -40,7 +40,10 @@ body{
 ::-moz-selection {
   background: #fcac72;    /* Gecko Browsers */
 }
-iframe{
+iframe.instagram-media {
+  margin: 0px auto !important;
+}
+iframe.youtube-media {
   width:80%;
   height:500px;
 }
@@ -64,7 +67,7 @@ h3{
   font-size: 28.5px;
 }
 h4 {
-  font-weight: normal;
+  font-weight: bold;
   font-size: 26.5px;
   line-height: 40px;
 }
